@@ -5,7 +5,6 @@ import os, sys, random
 import streamlit as st
 import pandas as pd
 
-
 #####################################################################
 #This section defins the functions. Each one is to create a different part of the loadout.
 def getRandomMission():
