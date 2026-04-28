@@ -135,12 +135,23 @@ currentMelee = getRandomMelee(currentClass)
 currentQuote = getRandomQuote()
 
 #####################################################################
-#This section creates the streamlit site. First create the text at the top of the page.
-st.set_page_config(page_title="Randomized Space Marine 2 Mission Selector") #Set the page title, icon, and layout
+#This section creates the streamlit site. First create the text at the top of the page and set the tab icon to the space marine logo
+st.set_page_config(page_title="Randomized Space Marine 2 Mission Selector", page_icon="./SM2.ico") 
 st.title("Randomized Space Marine 2 Mission Selector")
 
-#Add the quote
-st.markdown(currentQuote,width="stretch")
+#Then setup the background image
+page_element="""
+<style>
+[data-testid="stAppViewContainer"]{
+  background-image: url("https://4kwallpapers.com/images/wallpapers/warhammer-40k-space-2560x1440-17896.jpg");
+  background-size: cover;
+}
+[data-testid="stHeader"]{
+  background-color: rgba(0,0,0,0);
+}
+</style>
+"""
+st.markdown(page_element, unsafe_allow_html=True)
 
 #Create the table that contains the loadout
 loadoutTable = pd.DataFrame(
