@@ -1,0 +1,184 @@
+#This script will use streamlit to generate a random mission and loadout for Warhammer 40K Space Marine 2. 
+#It generates a mission, difficulty, class, weapon set, and a random quote. It also has a button to let you re-roll for a new setup
+#Created by: Disk5464 on GitHub
+#Version 1.0: Inital commit
+#Version 2.0: Rewrote the majority of the loadout logic to make more sense
+#Version 3.0: Changed the UI from Tkinker to Streamlit
+#####################################################################
+#Import the required libaries
+import os, sys, random
+import streamlit as st
+import pandas as pd
+
+#####################################################################
+#This section defins the functions. Each one is to create a different part of the loadout.
+def getRandomMission():
+    missionArry = ["Inferno", "Decapitation", "Vox Liberatis", "Reliquary", "Fall of Arteus", "Ballistic Engine", "Termination"]
+    mission = random.choice(missionArry)
+    return mission
+
+#Get a random difficulty. Each difficutly is weighted slightly so that Substantial and Ruthless come up a bit more often
+def getRandomDifficutly():
+    difficutlyArry = ["Average", "Substantial", "Ruthless", "Lethal"]
+    difficutly = str(random.choices(difficutlyArry, weights=(10,17,15,10))[0])
+    return difficutly
+
+#Get a random class
+def getRandomClass():
+    classArry = ["Tactical", "Assault", "Vanguard", "Bulwark", "Sniper", "Heavy"]
+    single_class = random.choice(classArry) #I wanted to use class as the var name but that's a reserved term, so single_class it is
+    return single_class
+
+#Get a random primary weapon
+def getRandomWeapon1(selectedClass):
+    if(selectedClass == "Tactical"):
+        primaryGunArry = ["Auto Bolt Rifle","Bolt Rifle","Heavy Bolt Rifle","Stalker Bolt Rifle","Bolt Carbine","Plasma Incinerator","Melta Rifle"] 
+    elif(selectedClass =="Vanguard"):
+        primaryGunArry = ["Instigator Bolt Carbine", "Bolt Carbine","Occulus Bolt Carbine","Melta Rifle"] 
+    elif(selectedClass =="Sniper"):
+        primaryGunArry = ["Stalker Bolt Rifle","Instigator Bolt Carbine","Bolt Sniper Rifle","Bolt Carbine","Las Fusil"] 
+    elif(selectedClass =="Heavy"):
+        primaryGunArry = ["Heavy Bolt Rifle", "Heavy Bolter","Heavy Plasma Incinerator", "Multi-Melta","Pyrecannon"]
+    elif(selectedClass =="Techmarine"):
+        primaryGunArry = ["Auto Bolt Rifle","Bolt Rifle","Heavy Bolt Rifle", "Heavy Plasma Incinerator","Occulus Bolt Carbine"]
+    elif(selectedClass =="Assault" or selectedClass =="Bulwark"):
+        primaryGunArry = ["None"]
+
+    gun1 = random.choice(primaryGunArry)
+    return gun1
+
+#Get a random secondary weapon
+def getRandomWeapon2(selectedClass):
+    if(selectedClass =="Tactical"):
+        secondaryGunArry = ["Bolt Pistol", "Heavy Bolt Pistol", "Plasma Pistol"]
+    elif(selectedClass =="Assault"):
+        secondaryGunArry = ["Bolt Pistol", "Heavy Bolt Pistol", "Plasma Pistol","Inferno Pistol","Neo-Volkite Pistol"]
+    if(selectedClass =="Vanguard"):
+        secondaryGunArry = ["Bolt Pistol", "Heavy Bolt Pistol", "Inferno Pistol","Neo-Volkite Pistol"]
+    elif(selectedClass =="Bulwark"):
+        secondaryGunArry = ["Bolt Pistol", "Heavy Bolt Pistol", "Plasma Pistol","Neo-Volkite Pistol"] 
+    elif(selectedClass =="Sniper"):
+        secondaryGunArry = ["Bolt Pistol","Heavy Bolt Pistol", "Inferno Pistol"]
+    elif(selectedClass =="Heavy"):
+        secondaryGunArry = ["Bolt Pistol", "Heavy Bolt Pistol", "Inferno Pistol"]
+    elif(selectedClass =="Techmarine"):
+        secondaryGunArry = ["Bolt Pistol", "Heavy Bolt Pistol", "Plasma Pistol", "Inferno Pistol", "Neo-Volkite Pistol"]
+
+
+    gun2 = random.choice(secondaryGunArry)
+    return gun2
+
+#Get a random melee weapon
+def getRandomMelee(selectedClass):
+    if(selectedClass == "Tactical"):
+        meleeArry = ["Chainsword", "Combat Knife"]
+    elif(selectedClass == "Assault"):
+        meleeArry = ["Chainsword", "Thunder Hammer", "Power Fist", "Power Sword", "Power Axe"] 
+    elif(selectedClass =="Vanguard"):
+        meleeArry = ["Chainsword","Combat Knife", "Power Axe"] 
+    elif(selectedClass =="Bulwark"):
+        meleeArry = ["Chainsword", "Thunder Hammer","Power Fist", "Power Sword","Power Axe"] 
+    elif(selectedClass =="Sniper"):
+        meleeArry = ["Combat Knife"] 
+    elif(selectedClass =="Techmarine"):
+        meleeArry = ["Combat Knife", "Power Sword", "Power Axe", "Omnissiah Axe"]
+    elif(selectedClass =="Heavy" or selectedClass =="Bulwark"):
+        meleeArry = ["None"]
+
+    gun2 = random.choice(meleeArry)
+    return gun2
+
+#Get a random quote
+def getRandomQuote():
+    #An array full of quotes
+    quotesArry = ["No Pity! No Remorse! No Fear! - Chaplain Grimaldus",
+    "Only in death does duty end. - Imperium of Man",
+    "The difference between heresy and treachery is ignorance. - Inquisition",
+    "Knowledge is power, guard it well. - Inquisitor Kryptman",
+    "To admit defeat is to blaspheme against the Emperor. - Imperial Guard",
+    "Give me a hundred Space Marines. Or failing that, give me a thousand other troops. - Primarch Rogal Dorn",
+    "Even in death, I still serve. - Space Marines",
+    "Innocence proves nothing. - Inquisition",
+    "There is no such thing as innocence, only degrees of guilt. - Inquisition",
+    "Pain is an illusion of the senses, despair an illusion of the mind. - Legion of the Damned",
+    "I am the hammer, I am the mail about His fist. I am the Spear in His hand. - Space Marines",
+    "Hope is the first step on the road to disappointment. - Space Marines",
+    "From the moment I understood the weakness of my flesh, it disgusted me. I craved the strength and certainty of steel. - Adeptus Mechanicus",
+    "I have no fear, for I am fear incarnate. - Space Marines",
+    "Walk softly, and carry a big gun. - Imperial Guard",
+    "Brother I am pinned here! - Space Marines",
+    "For the Emperor! - Space Marines",
+    "An open mind is like a fortress with its gates unbarred and unguarded. - Blood Ravens Librarian",
+    "Blessed is the mind too small for doubt. - Imperium of Man",
+    "By His will alone is Terra kept safe. - Adeptus Custodes",
+    "Ruthlessness is the kindness of the wise. - Lord Solar Macharius",
+    "They shall be my finest warriors, these men who give of themselves to me. - The Emperor of Mankind",
+    "Suffer not the unclean to live. - Inquisition",
+    "What I cannot crush with words, I will crush with the tanks of the Imperial Guard! - Imperial Guard Commander",
+    "Victory is but a prelude to the next battle. - Space Marines",
+    "Only in death does duty end. - Imperium of Man",
+    "Victory is achieved through mettle. Glory is achieved through metal. - Iron Hands Chapter"
+    ]
+
+    #Select a random quote, put it in a label
+    quote= random.choice(quotesArry)
+    return quote
+
+#####################################################################
+#This section calls all of the functions to generate the loadout
+currentMission = getRandomMission()
+currentDifficutly = getRandomDifficutly()
+currentClass = getRandomClass()
+currentPrimary = getRandomWeapon1(currentClass)
+currentSecondary = getRandomWeapon2(currentClass)
+currentMelee = getRandomMelee(currentClass)
+currentQuote = getRandomQuote()
+
+#####################################################################
+#This section creates the streamlit site. First create the text at the top of the page and set the tab icon to the space marine logo
+st.set_page_config(page_title="Randomized Space Marine 2 Mission Selector", page_icon="./SM2.ico") 
+st.title("Randomized Space Marine 2 Mission Selector")
+
+#Then setup the background image
+page_element="""
+<style>
+[data-testid="stAppViewContainer"]{
+  background-image: url("https://4kwallpapers.com/images/wallpapers/warhammer-40k-space-2560x1440-17896.jpg");
+  background-size: cover;
+}
+[data-testid="stHeader"]{
+  background-color: rgba(0,0,0,0);
+}
+</style>
+"""
+st.markdown(page_element, unsafe_allow_html=True)
+
+#Create the table that contains the loadout
+loadoutTable = pd.DataFrame(
+    {
+        "Mission": [currentMission],
+        "Difficulty": [currentDifficutly],
+        "Class": [currentClass],
+        "Primary Weapon": [currentPrimary],
+        "Secondary Weapon": [currentSecondary],
+        "Melee Weapon": [currentMelee],
+    },
+    index=["Your Orders:"],
+)
+st.dataframe(loadoutTable)
+
+
+#Set up the button to re-roll
+st.button("Click for another mission", key="reroll_button")  
+
+#####################################################################
+# To Do:
+# Make a custom font
+# <link href="https://fonts.googleapis.com/css2?family=Manufacturing+Consent&display=swap" rel="stylesheet">
+# https://fonts.google.com/selection/embed
+# https://docs.streamlit.io/develop/tutorials/configuration-and-theming/external-fonts
+#
+# Get font wrapping working on the table
+# This may be simmilar to how I did it for the amazon price tracker
+# https://discuss.streamlit.io/t/text-rendering-with-word-wrapping/63517/2
+

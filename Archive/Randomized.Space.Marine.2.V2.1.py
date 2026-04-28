@@ -1,32 +1,27 @@
-#Version 3.0: Changed the Tkinker to Streamlit
-#####################################################################
+
 #Import the required libaries
 import os, sys, random
-import streamlit as st
-
-
 import tkinter as tk
 from tkinter import ttk, scrolledtext
 
 #####################################################################
 #Create the window, give it a size, title, min and max size. 
-#window = tk.Tk()
-#window.title("Randomized Space Marine 2 Mission Selector")
-#window.geometry('700x470')
-#window.minsize(200, 200)
-#window.maxsize(1000, 1000)
-#window.config(bg="#362d3c") 
+window = tk.Tk()
+window.title("Randomized Space Marine 2 Mission Selector")
+window.geometry('700x470')
+window.minsize(200, 200)
+window.maxsize(1000, 1000)
+window.config(bg="#362d3c") 
 
 
 #Create the grid. https://www.pythontutorial.net/tkinter/tkinter-grid/
-#window.columnconfigure(0, weight=1)
-#window.columnconfigure(1, weight=2)
-#window.columnconfigure(2, weight=2)
+window.columnconfigure(0, weight=1)
+window.columnconfigure(1, weight=2)
+window.columnconfigure(2, weight=2)
 
 #Add a header at the top center and add it to the window. Make it bold and stretch over two columns
-st.title("Randomized Space Marine 2 Mission Selector")
-#greeting = ttk.Label(text="Randomized Space Marine 2 Mission Selector", font=("Franklin Gothic Bold", 20, "bold"), background="#362d3c", foreground="white")
-#greeting.grid(column=0, row=0, columnspan=3, padx=5, pady=5)
+greeting = ttk.Label(text="Randomized Space Marine 2 Mission Selector", font=("Franklin Gothic Bold", 20, "bold"), background="#362d3c", foreground="white")
+greeting.grid(column=0, row=0, columnspan=3, padx=5, pady=5)
 
 #####################################################################
 #This section will fill out the left column. The first step is to create a dictionary with key value pairs. They key is the name of the variable and the value is what the lable with be shown.
@@ -46,10 +41,9 @@ for i, (key, text) in enumerate(left_label_texts.items()):  #For each item in th
 
 #####################################################################
 #This section creates the button at the bottom which lets your re-roll your setup.
-st.button("Click for another mission", key="reroll_button")    
-#button = tk.Button(window, text="Click for another mission", font=("Dubai",12))    #Create a new button with the info for the current object
-#button['font'] = 12
-#button.grid(column=0, row=7, columnspan=3, padx=5, pady=5) #Put the label on a grid 
+button = tk.Button(window, text="Click for another mission", font=("Dubai",12))    #Create a new button with the info for the current object
+button['font'] = 12
+button.grid(column=0, row=7, columnspan=3, padx=5, pady=5) #Put the label on a grid 
 
 #This creates blank arays that will be used in button_press(event) to clear out the loadout and quote 
 resetRightColumnArry = []
