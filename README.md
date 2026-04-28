@@ -1,8 +1,13 @@
 # Randomized Space Marine 2 Ops Missions
 Space Marine 2 Ops mode is a ton of fun, but after a while playing the same class with the same weapons gets a bit boring. This will help with that! 
 
-Just run the EXE and a window will pop up with your new orders! 
+This repo will give you a randomized mission, difficutly, and a full loadout. 
+
+You can either grab the Tkinker verison and run the .bat file,
 <p align="center"><img src="https://github.com/user-attachments/assets/266f8a06-06b3-49b5-9903-361f65f29f53"/> </p> 
+
+Or you can host your own version in Streamlit!
+Pic goes here
 
 Want to re-roll your orders? I won't tell the emperor, just click the button and you'll get a whole new set of orders! You'll even get some fresh encouragement from the codex!
 
@@ -11,7 +16,10 @@ Want to re-roll your orders? I won't tell the emperor, just click the button and
 
 
 ## How does it work?
-The EXE was created with pyinstaller and all it does is call the python script. The script is basically a bunch of Tinker with some loops and .random. Additionally there is some logic that ensures that the class you choose does not give you a weapon that you cant use, so no primaries for the assault class. Also I did add in the new secondary.
+Orginally I used tkninker as the GUI with some logic to that ensure that the loadout you recieve dosent give you weapons that you cant use, so no primaries for the assault class as an example.
+
+Eventually I learned about Streamlit and decided to port it over. You can either host it on your own or use my instance at link
+
 
 ## Are there any requirements?
 Just have python installed, that's it!
