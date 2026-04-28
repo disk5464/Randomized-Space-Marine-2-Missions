@@ -1,4 +1,9 @@
-#Version 3.0: Changed the Tkinker to Streamlit
+#This script will use streamlit to generate a random mission and loadout for Warhammer 40K Space Marine 2. 
+#It generates a mission, difficulty, class, weapon set, and a random quote. It also has a button to let you re-roll for a new setup
+#Created by: Disk5464 on GitHub
+#Version 1.0: Inital commit
+#Version 2.0: Rewrote the majority of the loadout logic to make more sense
+#Version 3.0: Changed the UI from Tkinker to Streamlit
 #####################################################################
 #Import the required libaries
 import os, sys, random
@@ -155,6 +160,7 @@ st.dataframe(loadoutTable)
 #Set up the button to re-roll
 st.button("Click for another mission", key="reroll_button")  
 
+#####################################################################
 # To Do:
 # Make a custom font
 # <link href="https://fonts.googleapis.com/css2?family=Manufacturing+Consent&display=swap" rel="stylesheet">
@@ -164,92 +170,4 @@ st.button("Click for another mission", key="reroll_button")
 # Get font wrapping working on the table
 # This may be simmilar to how I did it for the amazon price tracker
 # https://discuss.streamlit.io/t/text-rendering-with-word-wrapping/63517/2
-
-
-
-#####################################################################
-#This section will fill out the left column. The first step is to create a dictionary with key value pairs. They key is the name of the variable and the value is what the lable with be shown.
-#left_label_texts = {
-#    "mission_Label":"Your mission is:", 
-#    "difficulty_Label":"Your difficulty is:",
-#    "class_Label":"Your class is:",
-#    "weapon1_Label": "Your primary weapon is:",
-#    "weapon2_Label": "Your secondary weapon is:",
-#    "weapon3_Label": "Your melee weapon is:"
-#}
-
-#For loop that loops through each dictornay value and creates label bassed of each
-#for i, (key, text) in enumerate(left_label_texts.items()):  #For each item in the dict reach each key/value
-#    label = ttk.Label(window, text=text, font=("Dubai",12), background="#362d3c", foreground="white")    #Create a new label with the info for the current object
-#    label.grid(row=i+1, column=0,  padx=5, pady=5, sticky=tk.W) #Put the label on a grid 
-
-#####################################################################
-#This section creates the button at the bottom which lets your re-roll your setup.
-
-#button = tk.Button(window, text="Click for another mission", font=("Dubai",12))    #Create a new button with the info for the current object
-#button['font'] = 12
-#button.grid(column=0, row=7, columnspan=3, padx=5, pady=5) #Put the label on a grid 
-
-#This creates blank arays that will be used in button_press(event) to clear out the loadout and quote 
-#resetRightColumnArry = []
-#quoteLableArry = []
-
-#####################################################################
-#This section creates the check boxes in the right column. It first creates variables for the status of the box, then it creates the box, finally it adds it ot the grid. 
-#mission_Check_state = tk.IntVar()
-#difficulty_Check_state = tk.IntVar()
-#class_Check_state = tk.IntVar()
-
-#check_Box_Mission = tk.Checkbutton(window, text="Mission", variable=mission_Check_state, onvalue=1, offvalue=0, font=("Dubai",12), background="#362d3c", foreground="white")
-#check_Box_Difficulty = tk.Checkbutton(window, text="Difficulty", variable=difficulty_Check_state, onvalue=1, offvalue=0, font=("Dubai",12), background="#362d3c", foreground="white")
-#check_Box_Class = tk.Checkbutton(window, text="Class", variable=class_Check_state, onvalue=1, offvalue=0, font=("Dubai",12), background="#362d3c", foreground="white")
-
-#check_Box_Mission.grid(column=2, row=1, columnspan=1, padx=5, pady=5) 
-#check_Box_Difficulty.grid(column=2, row=2, columnspan=1, padx=5, pady=5)
-#check_Box_Class.grid(column=2, row=3, columnspan=1, padx=5, pady=5) 
-
-#####################################################################
-
-#This function adds the loadout to the GUI. It is called on first load and whenever the reroll button is clicked
-#def loadCenterText(currentItems):
-#    for index, item in enumerate(currentItems):
-#        label = ttk.Label(window, text=item, font=("Dubai",12), anchor='w', background="#362d3c", foreground="white")    #Create a new label with the info for the current object
-#        label.grid(row=index+1, column=1,  padx=5, pady=5) #Put the label on a grid 
-#        resetRightColumnArry.append(label)
-
-#Add the loadout and quote to the grid. This only triggers on first load.
-#loadCenterText(center_label_texts)
-#currentQuote = getRandomQuote()
-#####################################################################
-#This will re-roll everything when the re-roll button is pressed
-#def button_press(event):
-#    print("Button Pressed")
-
-    #These for loops clear out whatever is in the 
- #   for e in resetRightColumnArry:
-  #      e.config(text="")
-
-   # for f in quoteLableArry:
-    #    f.config(text="")
-
-    #if mission_Check_state.get() == 0:
-     #   global currentMission
-     #   currentMission = getRandomMission()
-
-   # if difficulty_Check_state.get() == 0:
-   #     global currentDifficutly
-   #     currentDifficutly = getRandomDifficutly()
-
-   # if class_Check_state.get() == 0:
-   #     global currentClass, currentPrimary, currentSecondary, currentMelee
-   #     currentClass = getRandomClass()
-   #     currentPrimary = getRandomWeapon1(currentClass)
-   #     currentSecondary = getRandomWeapon2(currentClass)
-   #     currentMelee = getRandomMelee(currentClass)
-
-   # new_center_label_texts = [currentMission, currentDifficutly, currentClass, currentPrimary, currentSecondary,currentMelee]
-   # loadCenterText(new_center_label_texts)
-
-    #randomquote()
-
 
