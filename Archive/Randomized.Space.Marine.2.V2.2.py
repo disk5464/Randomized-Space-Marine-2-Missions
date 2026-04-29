@@ -159,7 +159,7 @@ st.data_editor(
 #Set up the button to re-roll
 st.button("Click for another mission", key="reroll_button")   
 
-if st.button:
+#if st.button:
      
 
 

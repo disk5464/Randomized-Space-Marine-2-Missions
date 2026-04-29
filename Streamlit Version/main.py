@@ -1,4 +1,9 @@
-#Version 3.0: Changed the Tkinker to Streamlit
+#This script will use streamlit to generate a random mission and loadout for Warhammer 40K Space Marine 2. 
+#It generates a mission, difficulty, class, weapon set, and a random quote. It also has a button to let you re-roll for a new setup
+#Created by: Disk5464 on GitHub
+#Version 1.0: Inital commit
+#Version 2.0: Rewrote the majority of the loadout logic to make more sense
+#Version 3.0: Changed the UI from Tkinker to Streamlit
 #####################################################################
 #Import the required libaries
 import os, sys, random
@@ -29,11 +34,13 @@ def getRandomWeapon1(selectedClass):
     if(selectedClass == "Tactical"):
         primaryGunArry = ["Auto Bolt Rifle","Bolt Rifle","Heavy Bolt Rifle","Stalker Bolt Rifle","Bolt Carbine","Plasma Incinerator","Melta Rifle"] 
     elif(selectedClass =="Vanguard"):
-        primaryGunArry = ["Melta Rifle","Instigator Bolt Carbine","Occulus Bolt Carbine"] 
+        primaryGunArry = ["Instigator Bolt Carbine", "Bolt Carbine","Occulus Bolt Carbine","Melta Rifle"] 
     elif(selectedClass =="Sniper"):
-        primaryGunArry = ["Stalker Bolt Rifle","Bolt Carbine","Bolt Sniper Rifle","Las Fusil"] 
+        primaryGunArry = ["Stalker Bolt Rifle","Instigator Bolt Carbine","Bolt Sniper Rifle","Bolt Carbine","Las Fusil"] 
     elif(selectedClass =="Heavy"):
-        primaryGunArry = ["Heavy Bolter ", "Heavy Plasma Incinerator", "Multi-Melta"]
+        primaryGunArry = ["Heavy Bolt Rifle", "Heavy Bolter","Heavy Plasma Incinerator", "Multi-Melta","Pyrecannon"]
+    elif(selectedClass =="Techmarine"):
+        primaryGunArry = ["Auto Bolt Rifle","Bolt Rifle","Heavy Bolt Rifle", "Heavy Plasma Incinerator","Occulus Bolt Carbine"]
     elif(selectedClass =="Assault" or selectedClass =="Bulwark"):
         primaryGunArry = ["None"]
 
@@ -42,38 +49,46 @@ def getRandomWeapon1(selectedClass):
 
 #Get a random secondary weapon
 def getRandomWeapon2(selectedClass):
-    if(selectedClass =="Vanguard"):
-        secondaryGunArry = ["Bolt Pistol", "Neo-Volkite"]
-    elif(selectedClass =="Sniper"):
-        secondaryGunArry = ["Bolt Pistol"]
-    elif(selectedClass =="Bulwark"):
-        secondaryGunArry = ["Bolt Pistol", "Neo-Volkite"] 
-    elif(selectedClass =="Heavy" or selectedClass == "Tactical"):
-        secondaryGunArry = ["Bolt Pistol"] 
+    if(selectedClass =="Tactical"):
+        secondaryGunArry = ["Bolt Pistol", "Heavy Bolt Pistol", "Plasma Pistol"]
     elif(selectedClass =="Assault"):
-        secondaryGunArry = ["Neo-Volkite", "Heavy Bolt Pistol", "Bolt Pistol"]
+        secondaryGunArry = ["Bolt Pistol", "Heavy Bolt Pistol", "Plasma Pistol","Inferno Pistol","Neo-Volkite Pistol"]
+    if(selectedClass =="Vanguard"):
+        secondaryGunArry = ["Bolt Pistol", "Heavy Bolt Pistol", "Inferno Pistol","Neo-Volkite Pistol"]
+    elif(selectedClass =="Bulwark"):
+        secondaryGunArry = ["Bolt Pistol", "Heavy Bolt Pistol", "Plasma Pistol","Neo-Volkite Pistol"] 
+    elif(selectedClass =="Sniper"):
+        secondaryGunArry = ["Bolt Pistol","Heavy Bolt Pistol", "Inferno Pistol"]
+    elif(selectedClass =="Heavy"):
+        secondaryGunArry = ["Bolt Pistol", "Heavy Bolt Pistol", "Inferno Pistol"]
+    elif(selectedClass =="Techmarine"):
+        secondaryGunArry = ["Bolt Pistol", "Heavy Bolt Pistol", "Plasma Pistol", "Inferno Pistol", "Neo-Volkite Pistol"]
+
 
     gun2 = random.choice(secondaryGunArry)
     return gun2
 
 #Get a random melee weapon
 def getRandomMelee(selectedClass):
-    if(selectedClass == "Assault"):
-        secondaryGunArry = ["Chainsword", "Thunder Hammer", "Power Fist"] 
-    elif(selectedClass =="Bulwark"):
-        secondaryGunArry = ["Chainsword", "Power Fist", "Power Sword"] 
+    if(selectedClass == "Tactical"):
+        meleeArry = ["Chainsword", "Combat Knife"]
+    elif(selectedClass == "Assault"):
+        meleeArry = ["Chainsword", "Thunder Hammer", "Power Fist", "Power Sword", "Power Axe"] 
     elif(selectedClass =="Vanguard"):
-        secondaryGunArry = ["Chainsword","Combat Knife"] 
+        meleeArry = ["Chainsword","Combat Knife", "Power Axe"] 
+    elif(selectedClass =="Bulwark"):
+        meleeArry = ["Chainsword", "Thunder Hammer","Power Fist", "Power Sword","Power Axe"] 
     elif(selectedClass =="Sniper"):
-        secondaryGunArry = ["Combat Knife"] 
-    elif(selectedClass == "Tactical"):
-        secondaryGunArry = ["Chainsword"] 
+        meleeArry = ["Combat Knife"] 
+    elif(selectedClass =="Techmarine"):
+        meleeArry = ["Combat Knife", "Power Sword", "Power Axe", "Omnissiah Axe"]
     elif(selectedClass =="Heavy" or selectedClass =="Bulwark"):
-        secondaryGunArry = ["None"]
+        meleeArry = ["None"]
 
-    gun2 = random.choice(secondaryGunArry)
+    gun2 = random.choice(meleeArry)
     return gun2
 
+#Get a random quote
 def getRandomQuote():
     #An array full of quotes
     quotesArry = ["No Pity! No Remorse! No Fear! - Chaplain Grimaldus",
@@ -109,7 +124,6 @@ def getRandomQuote():
     quote= random.choice(quotesArry)
     return quote
 
-
 #####################################################################
 #This section calls all of the functions to generate the loadout
 currentMission = getRandomMission()
@@ -119,137 +133,52 @@ currentPrimary = getRandomWeapon1(currentClass)
 currentSecondary = getRandomWeapon2(currentClass)
 currentMelee = getRandomMelee(currentClass)
 currentQuote = getRandomQuote()
-center_label_texts = [currentMission, currentDifficutly, currentClass, currentPrimary, currentSecondary,currentMelee]
 
 #####################################################################
-#This section creats the streamlit site. First create the text at the top of the page.
+#This section creates the streamlit site. First create the text at the top of the page and set the tab icon to the space marine logo
+st.set_page_config(page_title="Randomized Space Marine 2 Mission Selector", page_icon="./SM2.ico") 
 st.title("Randomized Space Marine 2 Mission Selector")
-st.markdown("Use the check boxes to the left to lock in any slection")
-st.markdown(currentQuote)
 
-#Create variables for the check boxes
-#checkMission = st.checkbox("Mission")
-#checkDifficulty = st.checkbox("Difficulty")
-#checkClass = st.checkbox("Class")
+#Then setup the background image
+page_element="""
+<style>
+[data-testid="stAppViewContainer"]{
+  background-image: url("https://4kwallpapers.com/images/wallpapers/warhammer-40k-space-2560x1440-17896.jpg");
+  background-size: cover;
+}
+[data-testid="stHeader"]{
+  background-color: rgba(0,0,0,0);
+}
+</style>
+"""
+st.markdown(page_element, unsafe_allow_html=True)
 
-#Set up the table with the check boxes and the variables for the current loadout.
-df = pd.DataFrame( 
-    {   
-        "Locked": [False, False, False, False, False, False],
-        "Mission": currentMission,
-        "Difficulty": currentDifficutly,
-        "Class": currentClass,
-        "Primary Weapon": currentPrimary,
-        "Secondary Weapon": currentSecondary,
-        "Melee Weapon": currentMelee
-    }
+#Create the table that contains the loadout
+loadoutTable = pd.DataFrame(
+    {
+        "Mission": [currentMission],
+        "Difficulty": [currentDifficutly],
+        "Class": [currentClass],
+        "Primary Weapon": [currentPrimary],
+        "Secondary Weapon": [currentSecondary],
+        "Melee Weapon": [currentMelee],
+    },
+    index=["Your Orders:"],
 )
-#Save the inital loadout
-st.session_state.CurrentLoadout = df
+st.dataframe(loadoutTable)
 
-st.data_editor(
-    df, 
-    column_config={"Locked": st.column_config.CheckboxColumn("Check to lock in selection", default=False)},
-    hide_index=True,
-    width="stretch",
-    disabled=["Mission", "Difficulty", "Class", "Primary Weapon", "Secondary Weapon", "Melee Weapon"]
-)
-    
 
 #Set up the button to re-roll
-st.button("Click for another mission", key="reroll_button")   
-
-if st.button:
-     
-
-
-
+st.button("Click for another mission", key="reroll_button")  
 
 #####################################################################
-#Create the window, give it a size, title, min and max size. 
-#window = tk.Tk()
-#window.title("Randomized Space Marine 2 Mission Selector")
-#window.geometry('700x470')
-#window.minsize(200, 200)
-#window.maxsize(1000, 1000)
-#window.config(bg="#362d3c") 
+# To Do:
+# Make a custom font
+# <link href="https://fonts.googleapis.com/css2?family=Manufacturing+Consent&display=swap" rel="stylesheet">
+# https://fonts.google.com/selection/embed
+# https://docs.streamlit.io/develop/tutorials/configuration-and-theming/external-fonts
+#
+# Get font wrapping working on the table
+# This may be simmilar to how I did it for the amazon price tracker
+# https://discuss.streamlit.io/t/text-rendering-with-word-wrapping/63517/2
 
-
-#Create the grid. https://www.pythontutorial.net/tkinter/tkinter-grid/
-#window.columnconfigure(0, weight=1)
-#window.columnconfigure(1, weight=2)
-#window.columnconfigure(2, weight=2)
-
-#Add a header at the top center and add it to the window. Make it bold and stretch over two columns
-#greeting = ttk.Label(text="Randomized Space Marine 2 Mission Selector", font=("Franklin Gothic Bold", 20, "bold"), background="#362d3c", foreground="white")
-#greeting.grid(column=0, row=0, columnspan=3, padx=5, pady=5)
-
-#####################################################################
-#This section will fill out the left column. The first step is to create a dictionary with key value pairs. They key is the name of the variable and the value is what the lable with be shown.
-#left_label_texts = {
-#    "mission_Label":"Your mission is:", 
-#    "difficulty_Label":"Your difficulty is:",
-#    "class_Label":"Your class is:",
-#    "weapon1_Label": "Your primary weapon is:",
-#    "weapon2_Label": "Your secondary weapon is:",
-#    "weapon3_Label": "Your melee weapon is:"
-#}
-
-#For loop that loops through each dictornay value and creates label bassed of each
-#for i, (key, text) in enumerate(left_label_texts.items()):  #For each item in the dict reach each key/value
-#    label = ttk.Label(window, text=text, font=("Dubai",12), background="#362d3c", foreground="white")    #Create a new label with the info for the current object
-#    label.grid(row=i+1, column=0,  padx=5, pady=5, sticky=tk.W) #Put the label on a grid 
-
-#####################################################################
-#This section creates the button at the bottom which lets your re-roll your setup.
-
-#button = tk.Button(window, text="Click for another mission", font=("Dubai",12))    #Create a new button with the info for the current object
-#button['font'] = 12
-#button.grid(column=0, row=7, columnspan=3, padx=5, pady=5) #Put the label on a grid 
-
-#This creates blank arays that will be used in button_press(event) to clear out the loadout and quote 
-#resetRightColumnArry = []
-#quoteLableArry = []
-
-#####################################################################
-#This section creates the check boxes in the right column. It first creates variables for the status of the box, then it creates the box, finally it adds it ot the grid. 
-#mission_Check_state = tk.IntVar()
-#difficulty_Check_state = tk.IntVar()
-#class_Check_state = tk.IntVar()
-
-#check_Box_Mission = tk.Checkbutton(window, text="Mission", variable=mission_Check_state, onvalue=1, offvalue=0, font=("Dubai",12), background="#362d3c", foreground="white")
-#check_Box_Difficulty = tk.Checkbutton(window, text="Difficulty", variable=difficulty_Check_state, onvalue=1, offvalue=0, font=("Dubai",12), background="#362d3c", foreground="white")
-#check_Box_Class = tk.Checkbutton(window, text="Class", variable=class_Check_state, onvalue=1, offvalue=0, font=("Dubai",12), background="#362d3c", foreground="white")
-
-#check_Box_Mission.grid(column=2, row=1, columnspan=1, padx=5, pady=5) 
-#check_Box_Difficulty.grid(column=2, row=2, columnspan=1, padx=5, pady=5)
-#check_Box_Class.grid(column=2, row=3, columnspan=1, padx=5, pady=5) 
-
-#####################################################################
-#This section is for functions that deal with the random data. There is one function for each row. The first gets a random mission
-
-
-#Get a random quote from the quote array.
-
-
-#####################################################################
-
-#This function adds the loadout to the GUI. It is called on first load and whenever the reroll button is clicked
-#def loadCenterText(currentItems):
-#    for index, item in enumerate(currentItems):
-#        label = ttk.Label(window, text=item, font=("Dubai",12), anchor='w', background="#362d3c", foreground="white")    #Create a new label with the info for the current object
-#        label.grid(row=index+1, column=1,  padx=5, pady=5) #Put the label on a grid 
-#        resetRightColumnArry.append(label)
-
-#Add the loadout and quote to the grid. This only triggers on first load.
-#loadCenterText(center_label_texts)
-#currentQuote = getRandomQuote()
-#####################################################################
-#This will re-roll everything when the re-roll button is pressed
-
-
-#####################################################################
-#Set it so that the escape key closes the window and that the left mouse button can press the re-roll button
-#window.bind('<Escape>', close_window)
-#button.bind("<Button-1>", button_press)
-#window.mainloop()
